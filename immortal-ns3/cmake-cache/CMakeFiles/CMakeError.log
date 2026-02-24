@@ -1,0 +1,57 @@
+Performing C++ SOURCE FILE Test STACKTRACE_LIBRARY_ENABLED failed with the following output:
+Change Dir: /home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_1cc71 && [1/2] Building CXX object CMakeFiles/cmTC_1cc71.dir/src.cxx.o
+[2/2] Linking CXX executable cmTC_1cc71
+FAILED: cmTC_1cc71 
+: && /usr/bin/c++ -std=c++23  CMakeFiles/cmTC_1cc71.dir/src.cxx.o -o cmTC_1cc71   && :
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+
+  #if __has_include(<stacktrace>)
+  int main()
+  {
+    return 0;
+  }
+  #endif
+  
+Performing C++ SOURCE FILE Test HAVE_UINT128_T failed with the following output:
+Change Dir: /home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_6a603 && [1/2] Building CXX object CMakeFiles/cmTC_6a603.dir/src.cxx.o
+FAILED: CMakeFiles/cmTC_6a603.dir/src.cxx.o 
+/usr/bin/c++ -DHAVE_UINT128_T  -std=c++23 -fPIE -std=c++23 -o CMakeFiles/cmTC_6a603.dir/src.cxx.o -c /home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp/src.cxx
+/home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp/src.cxx: In function ‘int main()’:
+/home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp/src.cxx:4:25: error: ‘uint128_t’ was not declared in this scope; did you mean ‘uint8_t’?
+    4 |             if (sizeof (uint128_t)) return 0;
+      |                         ^~~~~~~~~
+      |                         uint8_t
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+#include <cstdint>
+       int main()
+         {
+            if (sizeof (uint128_t)) return 0;
+            return 1;
+         }
+Determining if the include file net/netmap_user.h exists failed with the following output:
+Change Dir: /home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_c2820 && [1/2] Building CXX object CMakeFiles/cmTC_c2820.dir/CheckIncludeFile.cxx.o
+FAILED: CMakeFiles/cmTC_c2820.dir/CheckIncludeFile.cxx.o 
+/usr/bin/c++   -std=c++23 -fPIE -std=c++23 -o CMakeFiles/cmTC_c2820.dir/CheckIncludeFile.cxx.o -c /home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/docker/project/ns-3-dev/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: net/netmap_user.h: No such file or directory
+    1 | #include <net/netmap_user.h>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.
+
+
+
