@@ -1,0 +1,23 @@
+NETANIM VISUALIZATION GUIDE – ALL SCENARIOS
+=============================================
+
+SCENARIO 2 – BASELINE FAILURE (t = 1-5s):
+  - Both edge nodes turn MAGENTA → duplicate agents (split-brain)
+
+SCENARIO 1 – CONTINUITY SUCCESS (t = 5-40s):
+  - Crash: red → dark gray
+  - Recovery: bright green, verification turns gNB bright green
+  - Migration: gold → secondary turns bright green
+
+SCENARIO 3 – NETWORK PARTITION (t = 40-45s):
+  - Twin Agent stops (gNB dims), duplicate appears on secondary (magenta)
+  - After rejoin (45s), duplicate stops, verification success on primary
+
+SCENARIO 4 – ABRUPT HARD FAILURE (t = 50-52s):
+  - Crash without state capture (red → dark gray), then reappear (bright green)
+
+SCENARIO 5 – HIGH LOAD TESTS (t = 60-70s baseline, 70-80s with identity):
+  - Nodes turn dark gray during high load periods
+  - Compare metrics in CSV to see no degradation
+
+Full identity cards in identity-cards.txt

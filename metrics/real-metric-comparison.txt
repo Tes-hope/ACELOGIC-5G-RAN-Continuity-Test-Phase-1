@@ -1,0 +1,5 @@
+METRIC COMPARISON REPORT – Baseline vs Continuity-Enforced
+==========================================================
+
+All raw data is available in real-metrics.csv.
+Phase-wise averages can be computed from that file.
