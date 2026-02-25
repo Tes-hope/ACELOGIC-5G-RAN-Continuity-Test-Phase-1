@@ -1,5 +1,5 @@
 # ACELOGIC-5G-RAN-Continuity-Validation-Test  
-## Deterministic AI Identity Continuity in 5G NR Environments  
+## Deterministic Identity Continuity in 5G NR Environments  
 
 <p align="center">
   <img src="https://img.shields.io/badge/Version-1.0.0-2A2A2A?style=for-the-badge&logo=ns3&logoColor=white"/>
