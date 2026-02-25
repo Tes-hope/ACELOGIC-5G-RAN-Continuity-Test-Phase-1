@@ -35,7 +35,7 @@
 
 ## 📌 Executive Summary
 
-This repository presents a **formally validated NS‑3 simulation** that demonstrates deterministic AI identity continuity under 5G radio access network (RAN) volatility. Two distributed AI agents are evaluated under identical 5G‑LENA conditions:
+This repository presents a **formally validated NS‑3 simulation** that demonstrates deterministic identity continuity under 5G radio access network (RAN) volatility. Two distributed AI agents are evaluated under identical 5G‑LENA conditions:
 
 - **Baseline Agent** (no continuity enforcement)  
 - **Identity‑Enforced Agent** (deterministic identity anchor + split‑brain synchronizer)
