@@ -57,7 +57,7 @@ The objective is to prove that **logical entity continuity** can be preserved ac
 
 ## 🔷 Identity Model
 
-Each agent is bound to a **deterministic identity anchor** derived from immutable fields. The identity is stored separately from the agent’s execution state and never changes.
+Each agent is bound to a **deterministic identity anchor** derived from immutable fields.
 
 ### Identity Fields (Real Values)
 
