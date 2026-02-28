@@ -161,14 +161,14 @@ graph LR
 | Baseline Failure - Mid | 6.00 | 1.60 Mbps | 214.38 | 1,127,000 | 13 | 0 |
 | Baseline Failure - Peak | 8.00 | 3.77 Mbps | 691.99 | 2,069,200 | 158 | 0 |
 | Baseline Failure - End | 11.00 | 0.84 Mbps | 766.32 | 2,385,600 | 158 | 0 |
-| Crash Recovery | 34.00 | 1.92 Mbps | 6549.88 | 9,017,400 | 321 | ✅ 1 |
-| Agent Migration | 37.00 | 1.10 Mbps | 7624.67 | 10,385,200 | 325 | ✅ 1 |
-| Process Restart | 42.00 | 0.00 Mbps | 7985.74 | 11,900,000 | 644 | ✅ 1 |
-| Final State | 44.50 | 0.52 Mbps | 7744.15 | 12,705,000 | 648 | ✅ 1 |
+| Crash Recovery | 34.00 | 1.92 Mbps | 6549.88 | 9,017,400 | 321 |  1 |
+| Agent Migration | 37.00 | 1.10 Mbps | 7624.67 | 10,385,200 | 325 |  1 |
+| Process Restart | 42.00 | 0.00 Mbps | 7985.74 | 11,900,000 | 644 |  1 |
+| Final State | 44.50 | 0.52 Mbps | 7744.15 | 12,705,000 | 648 |  1 |
 
 ---
 
-## 📜 Complete Simulation Logs
+##  Complete Simulation Logs
 
 ```
 === STARTING SCENARIO: Baseline Failure (Duplicate Agents (Split-Brain)) ===
@@ -243,7 +243,7 @@ Lineage: JMC-Origin (ROOT) → Aegis-RAN
 
 ---
 
-## 📊 Final Report
+##  Final Report
 
 ```
 ================================================================================
@@ -271,7 +271,7 @@ Process Restart          Restart                         0.0       1
 
 ---
 
-## 📊 Scenario Analysis
+##  Scenario Analysis
 
 ### Baseline Failure (1-11s)
 
@@ -292,7 +292,7 @@ Process Restart          Restart                         0.0       1
 | Throughput at Recovery | 1.92 Mbps |
 | Latency | 6549.88 ms |
 | Packets Dropped | 321 |
-| Verification Events | ✅ 1 |
+| Verification Events |  1 |
 | **Result** | **Identity preserved** |
 
 ### Agent Migration (37-38s)
@@ -303,7 +303,7 @@ Process Restart          Restart                         0.0       1
 | Throughput | 1.10 Mbps |
 | Latency | 7624.67 ms |
 | Packets Dropped | 325 |
-| Verification Events | ✅ 1 |
+| Verification Events |  1 |
 | **Result** | **Identity preserved** |
 
 ### Process Restart (42-43s)
@@ -314,18 +314,18 @@ Process Restart          Restart                         0.0       1
 | Throughput at Recovery | 5.92 Mbps |
 | Latency | 7719.14 ms |
 | Packets Dropped | 647 |
-| Verification Events | ✅ 1 |
+| Verification Events |  1 |
 | **Result** | **Identity preserved** |
 
 ---
 
-## 🔷 Identity Model
+##  Identity Model
 
 Each agent is bound to a **deterministic fingerprint** derived from immutable fields. The identity is stored separately from the agent's execution state and never changes.
 
 ---
 
-## 🏗 Network Topology
+##  Network Topology
 
 | Node | Position | IP Address | Role |
 |------|----------|------------|------|
@@ -341,7 +341,7 @@ Each agent is bound to a **deterministic fingerprint** derived from immutable fi
 
 ---
 
-## 🔥 Failure Scenarios
+##  Failure Scenarios
 
 ```mermaid
 timeline
@@ -368,7 +368,7 @@ timeline
 
 ---
 
-## 🔄 Continuity Enforcement Sequence
+##  Continuity Enforcement Sequence
 
 After any failure, the twin agent verifies the enterprise agent's fingerprint before allowing it to resume operations.
 
@@ -430,7 +430,7 @@ cp nr-final.cc ../ns-3-dev/scratch/
 
 ---
 
-## 🚀 Usage
+##  Usage
 
 ### Run Simulation
 
@@ -452,7 +452,7 @@ Final-Results-v2/
 
 ---
 
-## 📊 Output 
+##  Output 
 
 ### `detailed-metrics.csv` Sample
 
@@ -476,7 +476,7 @@ Final-Results-v2/
 
 ---
 
-## 🎨 Visualization Guide (NetAnim)
+##  Visualization Guide (NetAnim)
 
 | State | Color | Hex |
 |-------|-------|-----|
