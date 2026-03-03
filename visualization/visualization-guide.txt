@@ -1,13 +1,18 @@
-NETANIM VISUALIZATION GUIDE – TWO SCENARIOS
-============================================
+NETANIM VISUALIZATION GUIDE
+===========================
 
-SCENARIO 2 – BASELINE FAILURE (t = 1-5s):
+SCENARIO 1 – BASELINE FAILURE (t = 1-11s):
   - Both edge nodes turn MAGENTA → duplicate agents (split-brain)
-  - Control messages double, packet loss may increase
+  - Packet loss is solely due to real channel effects (shadowing, fading).
 
-SCENARIO 1 – CONTINUITY SUCCESS (t = 5-50s):
-  - Crash: red → dark gray
-  - Recovery: bright green, verification turns gNB bright green
-  - Migration: gold → secondary turns bright green
+SCENARIO 2 – CONTINUITY SUCCESS (t = 12-40s):
+  - Crash (20s): red → dark gray
+  - Recovery (22s): bright green, verification turns gNB bright green
+  - Migration (25s): gold → secondary turns bright green
+  - Restart (30s): red → bright green
+  - Teardown (35s): red → dark gray, redeploy (37s): bright green
 
-Full identity cards in identity-cards.txt
+SCENARIO 3 – NETWORK PARTITION (t = 40-45s):
+  - Twin (gNB) turns gray → offline
+  - Duplicate enterprise agent appears on secondary (magenta)
+  - No twin to verify → split-brain persists
