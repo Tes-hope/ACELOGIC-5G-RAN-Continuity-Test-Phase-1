@@ -324,7 +324,6 @@ Process Restart          Restart                         0.0       1
 cd ../ns-3-dev
 ./ns3 run "scratch/nr-final --simTime=45"
 
-<<<<<<< HEAD
 # View results
 ls Final-Results-v2/
 ```
