@@ -318,7 +318,7 @@ Process Restart          Restart                         0.0       1
 | Packets Dropped | 647 |
 | Verification Events | ✅ 1 |
 | **Result** | **Identity preserved** |
->>>>>>> 08d18f6 (Updated README, visualizations, deleted old metrics, added final metrics and results)
+
 
 # Run simulation
 cd ../ns-3-dev
@@ -332,7 +332,7 @@ ls Final-Results-v2/
 ## 🔷 Identity Model
 
 Each agent is bound to a **deterministic fingerprint** derived from immutable fields. The identity is stored separately from the agent's execution state and never changes.
->>>>>>> 08d18f6 (Updated README, visualizations, deleted old metrics, added final metrics and results)
+
 
 ---
 
@@ -360,7 +360,7 @@ Each agent is bound to a **deterministic fingerprint** derived from immutable fi
 | **PGW** | (0, -200) | 7.0.0.7/8 | Packet gateway |
 
 
->>>>>>> 08d18f6 (Updated README, visualizations, deleted old metrics, added final metrics and results)
+
 
 ---
 
@@ -716,7 +716,7 @@ sequenceDiagram
 
 
 
->>>>>>> 08d18f6 (Updated README, visualizations, deleted old metrics, added final metrics and results)
+
 
 
 ---
