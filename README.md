@@ -158,8 +158,7 @@ When you open `Results/nr-immortal.xml` in NetAnim, nodes change color to reflec
 *Screenshot example (actual NetAnim output will show nodes moving and colour changes):*
 
 ```
-    (Placeholder) → Include a screenshot of NetAnim window here.
-    For example: ![NetAnim Visualization](assets/netanim-screenshot.png)
+     ![NetAnim Visualization](assets/netanim-screenshot.png)
 ```
 
 ---
