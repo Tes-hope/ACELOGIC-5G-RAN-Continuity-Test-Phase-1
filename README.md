@@ -85,14 +85,82 @@ The simulation executes four **continuity‑success** scenarios after a baseline
 
 | Scenario               | Description                                                                 | Verification Trigger |
 |------------------------|-----------------------------------------------------------------------------|----------------------|
-| **Baseline Failure**   | Two identical enterprise agents (split‑brain) – no verification            |  none               |
+| **Baseline Failure**   | Two identical enterprise agents (split‑brain) – no verification            | ❌ none               |
 | **Node Crash**         | Primary edge crashes – agent disappears, then recovers                     | ✅ after recovery     |
 | **Agent Migration**    | Enterprise agent moves from primary to secondary edge                      | ✅ after migration    |
 | **Process Restart**    | Agent process terminates and restarts on the same node                     | ✅ after restart      |
 | **Full Teardown**      | Both agents destroyed, then redeployed                                     | ✅ after redeploy     |
-| **Network Partition**  | Twin (gNB) goes offline – duplicate appears; no verification possible      |  verification fails |
+| **Network Partition**  | Twin (gNB) goes offline – duplicate appears; no verification possible      | ❌ verification fails |
 
 All recovery events include an **immediate identity verification** by the Twin agent.
+
+---
+
+## Figure 1: Verification Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    IDENTITY VERIFICATION FLOW                    │
+└─────────────────────────────────────────────────────────────────┘
+
+    [JMC-Origin Twin]                    [Aegis-RAN Enterprise]
+    (Root of Trust)                       (Target Agent)
+           │                                      │
+           │  1. Register reference fingerprint   │
+           │─────────────────────────────────────>│
+           │                                      │
+           │  2. Disruption occurs                │
+           │     (crash / migration / restart)    │
+           │                                      │
+           │  3. Agent recovers / reappears       │
+           │                                      │
+           │  4. Twin requests verification       │
+           │─────────────────────────────────────>│
+           │                                      │
+           │  5. Agent provides current identity  │
+           │<─────────────────────────────────────│
+           │                                      │
+           │  6. Twin recomputes fingerprint      │
+           │     and compares to registered       │
+           │                                      │
+           │  7. Result: PASS ✓ or FAIL ✗         │
+           │─────────────────────────────────────>│
+           │                                      │
+           ▼                                      ▼
+      Continuity                              Identity
+        Preserved                              Enforced
+```
+
+---
+
+## Figure 2: NetAnim Color Legend (Visualization)
+
+When you open `Results/nr-immortal.xml` in NetAnim, nodes change color to reflect events:
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                     NODE COLOR LEGEND                           │
+├────────────────┬───────────────────────────────────────────────┤
+│ Color          │ Meaning                                       │
+├────────────────┼───────────────────────────────────────────────┤
+│ 🟣 Purple       │ gNB (Twin Agent – normal)                     │
+│ 🟢 Bright Green │ Edge Node – normal / verified successfully   │
+│ 🔴 Red          │ Edge Node – crash event                       │
+│ ⚫ Dark Gray    │ Edge Node – offline / disappeared             │
+│ 🟡 Gold         │ Edge Node – migrating                         │
+│ 🟢 Lime Green   │ Edge Node – reappeared after recovery         │
+│ 🟣 Magenta      │ Split‑brain – duplicate agents detected       │
+│ ⚪ Light Gray   │ Twin offline (network partition)              │
+│ 🔵 Blue         │ UEs – normal operation                        │
+└────────────────┴───────────────────────────────────────────────┘
+```
+
+*Screenshot example (actual NetAnim output will show nodes moving and colour changes):*
+
+```
+    (Placeholder) → Include a screenshot of NetAnim window here.
+    For example: ![NetAnim Visualization](assets/netanim-screenshot.png)
+```
 
 ---
 
@@ -111,7 +179,7 @@ Based on the actual simulation run:
 | Identity mutations         | 0          |
 | Split‑brain occurrences    | 0 (enforced) |
 
-> *The baseline scenario (duplicate agents) produced split‑brain – magenta nodes in visualisation.*
+> *The baseline scenario (duplicate agents) produced split‑brain – magenta nodes in visualisation – with **zero** verification events, as expected.*
 
 ### Per‑Scenario Verification Events
 
@@ -129,7 +197,6 @@ Based on the actual simulation run:
 - The SHA‑256 fingerprints remained **bit‑identical** after crash, migration, restart, and redeployment.  
 - Verification always succeeded (`Fingerprint ✓, Lineage ✓ -> PASS`).  
 - Packet loss and latency degradation occurred during disruption events (e.g., delay increased from ~45 ms to >2000 ms during crashes), but **identity continuity was never compromised**.  
-
 
 ---
 
@@ -245,22 +312,19 @@ The simulation separates **identity** from **execution**:
 
 ---
 
-## Validation Scope 
+## Validation Scope
 
 This validation is conducted under:
 
 - **Simulated** 5G NR channel conditions (3GPP UMi, shadowing enabled).  
 - **Controlled** failure injection (crashes, migrations, restarts).  
 
-
 Results demonstrate **feasibility** of deterministic identity continuity, not production performance guarantees.  
 Real‑world deployment would require:
 
-- Distributed verification .  
+- Distributed verification.  
 - Hardware security modules (HSM) for fingerprint storage.  
 - Integration with container orchestration (Kubernetes – Phase 4).
-
-
 
 ---
 
@@ -292,10 +356,8 @@ Phase 1 successfully demonstrates that **deterministic SHA‑256 fingerprints** 
 - Enable a root‑of‑trust agent to verify continuity with 100% success.  
 - Eliminate split‑brain conditions when the verification mechanism is active.  
 
-The results provide a solid foundation for moving to production deployment .
+The results provide a solid foundation for moving to production deployment.
 
 ---
 
 
-
-.
