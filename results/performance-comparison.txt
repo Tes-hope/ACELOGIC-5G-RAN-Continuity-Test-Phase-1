@@ -8,9 +8,9 @@ Baseline Performance (Normal Operation):
 
 Scenario: Baseline Failure (Duplicate Agents (Split-Brain))
   Downtime: 11 s
-  Throughput: 0.42 Mbps (-0% vs baseline)
-  Latency: 490.353 ms (+0 ms vs baseline)
-  Packet Loss: 0.00388806%
+  Throughput: 1.456 Mbps (-0% vs baseline)
+  Latency: 242.371 ms (+0 ms vs baseline)
+  Packet Loss: 0.000878949%
   Verification Events: 0
 
 Scenario: Node Crash (Crash + Recovery)

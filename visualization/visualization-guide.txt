@@ -1,18 +1,21 @@
-NETANIM VISUALIZATION GUIDE
-===========================
+NETANIM VISUALIZATION GUIDE (SHA-256 Fingerprints)
+==================================================
+
+All fingerprints are SHA-256 (0x + 64 hex chars).
+Previews show the first 18 hex chars for readability.
 
 SCENARIO 1 – BASELINE FAILURE (t = 1-11s):
-  - Both edge nodes turn MAGENTA → duplicate agents (split-brain)
-  - Packet loss is solely due to real channel effects (shadowing, fading).
+  - Both edge nodes turn MAGENTA -> duplicate agents (split-brain)
+  - Packet loss is due to real channel effects (shadowing, fading).
 
 SCENARIO 2 – CONTINUITY SUCCESS (t = 12-40s):
-  - Crash (20s): red → dark gray
+  - Crash (20s): red -> dark gray
   - Recovery (22s): bright green, verification turns gNB bright green
-  - Migration (25s): gold → secondary turns bright green
-  - Restart (30s): red → bright green
-  - Teardown (35s): red → dark gray, redeploy (37s): bright green
+  - Migration (25s): gold -> secondary turns bright green
+  - Restart (30s): red -> bright green
+  - Teardown (35s): red -> dark gray, redeploy (37s): bright green
 
 SCENARIO 3 – NETWORK PARTITION (t = 40-45s):
-  - Twin (gNB) turns gray → offline
+  - Twin (gNB) turns gray -> offline
   - Duplicate enterprise agent appears on secondary (magenta)
-  - No twin to verify → split-brain persists
+  - No twin to verify -> split-brain persists

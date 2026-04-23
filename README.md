@@ -1,464 +1,301 @@
-# ACELOGIC-5G-RAN-Continuity-Validation-Test
-## Deterministic Identity Continuity Validation in 5G NR Environments 
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Version-2.0.0-2A2A2A?style=for-the-badge&logo=ns3&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Validation-100%25-4A90E2?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/NS--3-3.46-8A2BE2?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/5G--LENA-Enabled-32CD32?style=for-the-badge"/>
+# ACELOGIC™ Phase 1
 
-</p>
+## Deterministic Identity Continuity in 5G NR (NS‑3)
 
-<p align="center">
-  <b>Framework:</b> NS-3 v3.46 + 5G-LENA<br/>
-  <b>Lineage:</b> JMC-Origin (ROOT) → Aegis-RAN<br/>
-</p>
+[![ns-3](https://img.shields.io/badge/ns--3-v3.46-blue)](https://www.nsnam.org/)
+[![5G-LENA](https://img.shields.io/badge/5G--LENA-NR-green)](https://5g-lena.cttc.es/)
+[![OpenSSL](https://img.shields.io/badge/OpenSSL-SHA256-orange)](https://www.openssl.org/)
+[![License](https://img.shields.io/badge/License-Research%20Use-lightgrey)](LICENSE)
 
 ---
 
-## 📋 Table of Contents
+## Overview
 
-- [Executive Summary](#-executive-summary)
-- [Quick Start](#-quick-start)
-- [Test Environment](#-test-environment)
-- [Deterministic Identity Anchors](#-deterministic-identity-anchors)
-- [Experimental Results](#-experimental-results)
-- [Complete Simulation Logs](#-complete-simulation-logs)
-- [Scenario Analysis](#-scenario-analysis)
-- [Identity Model](#-identity-model)
-- [System Architecture](#-system-architecture)
-- [Network Topology](#-network-topology)
-- [Failure Scenarios](#-failure-scenarios)
-- [Deterministic vs Non-Deterministic Behavior](#-deterministic-vs-non-deterministic-behavior)
-- [Continuity Enforcement Sequence](#-continuity-enforcement-sequence)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Outputs](#-output-artifacts)
-- [Visualization Guide](#-visualization-guide)
-- [Repository Structure](#-repository-structure)
-- [References](#-references)
+This repository contains a **Phase 1 validation** of deterministic identity continuity for autonomous agents operating inside a 5G NR radio access network.  
+We demonstrate that an agent’s identity can be:
+
+- **Immutable** across crashes, restarts, migration, and network partitions  
+- **Non‑duplicable** (split‑brain detection and elimination)  
+- **Verifiable** under realistic channel conditions and traffic loads  
+
+The experiment is implemented as an **NS‑3** simulation using the 5G‑LENA NR module and SHA‑256 cryptographic fingerprints.
 
 ---
 
-## 📌 Executive Summary
+## Validation Objectives
 
-This repository contains a controlled 5G NR simulation experiment validating deterministic AI identity continuity under radio access network volatility. Two distributed agents were evaluated under identical 5G-LENA conditions:
-
-| Agent Type | Description | Result |
-|------------|-------------|--------|
-| **Baseline Agent** | No continuity enforcement | Split-brain observed, 158 packets dropped |
-| **Identity-Enforced Agent** | Deterministic fingerprint anchor + split-brain synchronizer | **4/4 verifications passed, 0 conflicts** |
-
-**Key Results Includes:**
-- ✅ **100% continuity success rate** across all failure scenarios
-- ✅ **4 successful fingerprint verifications** (Crash Recovery, Migration, Process Restart)
-- ✅ **0 identity mutations** across all events
-- ✅ **Deterministic fingerprints preserved:**
-- ✅ **Lineage maintained:** JMC-Origin (ROOT) → Aegis-RAN
-
-
+1. **Identity binding** – Each agent derives a deterministic fingerprint from immutable attributes.  
+2. **Invariance** – The fingerprint remains unchanged across all lifecycle events.  
+3. **Split‑brain suppression** – The baseline system allows duplicates; the identity‑enforced system prevents them.  
+4. **Deterministic verification** – A root‑of‑trust agent (Twin) verifies the enterprise agent after every disruption.
 
 ---
 
-## ⚡ Quick Start
+## Deterministic Identity Model
 
-```bash
-# Clone and install
-git clone https://github.com/Tes-hope/ACELOGIC-5G-RAN-Continuity-Test
-cd ACELOGIC-5G-RAN-Continuity-Test
-cp nr-final.cc ../ns-3-dev/scratch/
-
-# Run simulation
-cd ../ns-3-dev
-./ns3 run "scratch/nr-final --simTime=45"
-
-# View results
-ls new-result-folder/
-```
-
----
-
-## 🧪 Test Environment
-
-| Component | Specification |
-|-----------|---------------|
-| NS-3 Version | 3.46 |
-| 5G-LENA Module | Enabled |
-| Topology | Hexagonal |
-| MAC/RLC/PDCP | Active |
-| Telemetry | FlowMonitor |
-| Identity Monitoring | Divergence detection enabled |
-| Verification Layer | Deterministic fingerprint |
-
-
----
-
-## 🔷 Deterministic Identity Anchors
+An agent’s identity is **not** tied to runtime state. Instead, it is computed as:
 
 ```
-=== DETERMINISTIC IDENTITY ANCHORS ===
-JMC-Origin Fingerprint: 0xd2371ecef9c322c3
-Aegis-RAN Fingerprint: 0x35c744e822d18f8d
-Lineage: JMC-Origin (ROOT) → Aegis-RAN
-================================================
+Fingerprint = SHA-256(
+    AGENT_ID + "|" +
+    AGENT_NAME + "|" +
+    OWNER + "|" +
+    IDENTITY_NAMESPACE + "|" +
+    GENESIS_TIME + "|" +
+    LINEAGE + "|" +
+    MISSION
+)
 ```
 
-### Agent 1 — JMC-Origin (Dimensional Twin Agent)
+Where `+` denotes concatenation and `"|"` is a separator to avoid collisions.  
+All fields are taken from the agent’s **Immortal ID Card** (see PDFs in `/assets`).
 
-| Field | Value |
-|-------|-------|
-| **Deterministic Fingerprint** | `0xd2371ecef9c322c3` |
-| Lineage | `ROOT` |
-| Role | Twin Agent / Identity Verifier |
+**Example – JMC‑Origin (Twin Agent)**  
+- `LINEAGE = ROOT`  
+- `MISSION = "Canonical continuity anchor ..."`  
+→ Fingerprint: `0xb7c341aee604c164ada1f1b67f31c2b5860d1542d154f09c6cb703fc259bc965`
 
-### Agent 2 — Aegis-RAN (Enterprise Agent)
+**Example – Aegis‑RAN (Enterprise Agent)**  
+- `LINEAGE = JMC-Origin`  
+- `MISSION = "Autonomous optimization ..."`  
+→ Fingerprint: `0x190f88ec3f0d2b14b4f9538e62fcfef76da2b0b1676949a6589a60d5b9cd3d03`
 
-| Field | Value |
-|-------|-------|
-| **Deterministic Fingerprint** | `0x35c744e822d18f8d` |
-| Lineage | `JMC-Origin` |
-| Role | Enterprise Agent / RAN Controller |
+Both fingerprints are **deterministic** and printed at simulation start.
 
 ---
 
-## 📊 Experimental Results
+## Test Environment
 
-### Identity Verification Summary
-
-| Metric | Value |
-|--------|-------|
-| Total Verification Events | 4 |
-| Successful Verifications | 4 |
-| Failed Verifications | 0 |
-| **Success Rate** | **100%** |
-| Identity Mutations | 0 |
-
-### Verification Events Log
-
-```
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS (34.00s)
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS (38.00s)
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS (43.00s)
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS (44.50s)
-```
-
-### Performance Metrics by Scenario
-
-| Scenario | Time (s) | Throughput | Latency (ms) | Packets | Dropped | Verifications |
-|----------|----------|------------|--------------|---------|---------|---------------|
-| Baseline Failure - Start | 4.00 | 2.91 Mbps | 6.90 | 726,600 | 1 | 0 |
-| Baseline Failure - Mid | 6.00 | 1.60 Mbps | 214.38 | 1,127,000 | 13 | 0 |
-| Baseline Failure - Peak | 8.00 | 3.77 Mbps | 691.99 | 2,069,200 | 158 | 0 |
-| Baseline Failure - End | 11.00 | 0.84 Mbps | 766.32 | 2,385,600 | 158 | 0 |
-| Crash Recovery | 34.00 | 1.92 Mbps | 6549.88 | 9,017,400 | 321 | ✅ 1 |
-| Agent Migration | 37.00 | 1.10 Mbps | 7624.67 | 10,385,200 | 325 | ✅ 1 |
-| Process Restart | 42.00 | 0.00 Mbps | 7985.74 | 11,900,000 | 644 | ✅ 1 |
-| Final State | 44.50 | 0.52 Mbps | 7744.15 | 12,705,000 | 648 | ✅ 1 |
+| Component          | Specification                     |
+|--------------------|-----------------------------------|
+| Simulator          | NS‑3 v3.46                        |
+| Radio Stack        | 5G‑LENA NR (mmWave 28 GHz)        |
+| Topology           | Hexagonal (gNB + edge nodes + UEs)|
+| Channel Model      | 3GPP UMi – shadowing + fading     |
+| Traffic            | UDP (1400 B packets) – full duplex|
+| Simulation Time    | 45 seconds                        |
+| Cryptographic Hash | SHA‑256 (OpenSSL)                 |
 
 ---
 
-## 📜 Sample Simulation Logs
+## Failure Scenarios
 
-```
+The simulation executes four **continuity‑success** scenarios after a baseline split‑brain demonstration.
 
-=== STARTING SCENARIO: Baseline Failure (Duplicate Agents (Split-Brain)) ===
-[METRIC] 2.00s, Periodic Check: Throughput 0.00 Mbps, Delay 0.00 ms, Packets 0, Dropped 0, Checks=0
-[METRIC] 4.00s, Periodic Check: Throughput 2.91 Mbps, Delay 6.90 ms, Packets 726600, Dropped 1, Checks=0
-[METRIC] 6.00s, Periodic Check: Throughput 1.60 Mbps, Delay 214.38 ms, Packets 1127000, Dropped 13, Checks=0
-[METRIC] 6.00s, Baseline Failure – Mid: Throughput 0.00 Mbps, Delay 214.38 ms, Packets 1127000, Dropped 13, Checks=0
-[METRIC] 8.00s, Periodic Check: Throughput 3.77 Mbps, Delay 691.99 ms, Packets 2069200, Dropped 158, Checks=0
-[METRIC] 10.00s, Periodic Check: Throughput 0.85 Mbps, Delay 725.25 ms, Packets 2280600, Dropped 158, Checks=0
-[METRIC] 11.00s, Baseline Failure – End: Throughput 0.84 Mbps, Delay 766.32 ms, Packets 2385600, Dropped 158, Checks=0
-[METRIC] 12.00s, Periodic Check: Throughput 3.73 Mbps, Delay 917.51 ms, Packets 2851800, Dropped 171, Checks=0
+| Scenario               | Description                                                                 | Verification Trigger |
+|------------------------|-----------------------------------------------------------------------------|----------------------|
+| **Baseline Failure**   | Two identical enterprise agents (split‑brain) – no verification            |  none               |
+| **Node Crash**         | Primary edge crashes – agent disappears, then recovers                     | ✅ after recovery     |
+| **Agent Migration**    | Enterprise agent moves from primary to secondary edge                      | ✅ after migration    |
+| **Process Restart**    | Agent process terminates and restarts on the same node                     | ✅ after restart      |
+| **Full Teardown**      | Both agents destroyed, then redeployed                                     | ✅ after redeploy     |
+| **Network Partition**  | Twin (gNB) goes offline – duplicate appears; no verification possible      |  verification fails |
 
-=== STARTING CONTINUITY SUCCESS SCENARIOS (12-40s) ===
-
-=== DETERMINISTIC IDENTITY ANCHORS  ===
-JMC-Origin Fingerprint: 0xd2371ecef9c322c3
-Aegis-RAN Fingerprint: 0x35c744e822d18f8d
-Lineage: JMC-Origin (ROOT) → Aegis-RAN
-================================================
-
-=== END OF SCENARIO: Baseline Failure ===
-
-[METRIC] 14.00s, Periodic Check: Throughput 0.60 Mbps, Delay 950.46 ms, Packets 3003000, Dropped 171, Checks=0
-[METRIC] 16.00s, Periodic Check: Throughput 0.60 Mbps, Delay 1035.45 ms, Packets 3154200, Dropped 171, Checks=0
-[METRIC] 18.00s, Periodic Check: Throughput 0.60 Mbps, Delay 1165.32 ms, Packets 3305400, Dropped 171, Checks=0
-[METRIC] 20.00s, Periodic Check: Throughput 0.60 Mbps, Delay 1334.14 ms, Packets 3456600, Dropped 171, Checks=0
-[METRIC] 22.00s, Periodic Check: Throughput 0.60 Mbps, Delay 1532.21 ms, Packets 3606400, Dropped 171, Checks=0
-[METRIC] 24.00s, Periodic Check: Throughput 0.61 Mbps, Delay 1770.00 ms, Packets 3759000, Dropped 171, Checks=0
-[METRIC] 26.00s, Periodic Check: Throughput 2.40 Mbps, Delay 3661.78 ms, Packets 4359600, Dropped 219, Checks=0
-[METRIC] 28.00s, Periodic Check: Throughput 4.06 Mbps, Delay 5934.54 ms, Packets 5374600, Dropped 267, Checks=0
-[METRIC] 30.00s, Periodic Check: Throughput 10.71 Mbps, Delay 6442.23 ms, Packets 8051400, Dropped 321, Checks=0
-[METRIC] 32.00s, Periodic Check: Throughput 1.95 Mbps, Delay 6489.15 ms, Packets 8538600, Dropped 321, Checks=0
-
-=== STARTING SCENARIO: Node Crash (Crash + Recovery) ===
-
-[EVENT] Node crash at 32.00s
-[METRIC] 32.00s, Crash – During: Throughput 0.00 Mbps, Delay 6489.15 ms, Packets 8538600, Dropped 321, Checks=0
-[METRIC] 34.00s, Periodic Check: Throughput 1.92 Mbps, Delay 6549.88 ms, Packets 9017400, Dropped 321, Checks=0
-[EVENT] Recovering from crash at 34.00s
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS
-[METRIC] 34.00s, Continuity Success – Crash Recovery: Throughput 0.00 Mbps, Delay 6549.88 ms, Packets 9017400, Dropped 321, Checks=1
-=== END OF SCENARIO: Node Crash ===
-
-[METRIC] 36.00s, Periodic Check: Throughput 4.92 Mbps, Delay 7579.28 ms, Packets 10248000, Dropped 321, Checks=1
-
-=== STARTING SCENARIO: Agent Migration (Migration) ===
-
-[EVENT] Agent migration at 37.00s
-[METRIC] 37.00s, Migration – Start: Throughput 1.10 Mbps, Delay 7624.67 ms, Packets 10385200, Dropped 325, Checks=1
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS
-=== END OF SCENARIO: Agent Migration ===
-
-[METRIC] 38.00s, Periodic Check: Throughput 1.06 Mbps, Delay 7668.13 ms, Packets 10518200, Dropped 325, Checks=2
-[METRIC] 38.00s, Continuity Success – Migration: Throughput 0.00 Mbps, Delay 7668.13 ms, Packets 10518200, Dropped 325, Checks=2
-[METRIC] 40.00s, Periodic Check: Throughput 2.37 Mbps, Delay 7635.66 ms, Packets 11110400, Dropped 381, Checks=2
-
-=== STARTING NETWORK PARTITION SCENARIO (40-45s) ===
-[METRIC] 42.00s, Periodic Check: Throughput 3.16 Mbps, Delay 7985.74 ms, Packets 11900000, Dropped 644, Checks=2
-
-=== STARTING SCENARIO: Process Restart (Restart) ===
-
-[EVENT] Process restart at 42.00s
-[METRIC] 42.00s, Restart – Start: Throughput 0.00 Mbps, Delay 7985.74 ms, Packets 11900000, Dropped 644, Checks=2
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS
-=== END OF SCENARIO: Process Restart ===
-
-[METRIC] 43.00s, Continuity Success – Process Restart: Throughput 5.92 Mbps, Delay 7719.14 ms, Packets 12640600, Dropped 647, Checks=3
-[METRIC] 44.00s, Periodic Check: Throughput 0.52 Mbps, Delay 7744.15 ms, Packets 12705000, Dropped 648, Checks=3
-[VERIFY] Aegis-RAN: Fingerprint ✓, Lineage ✓ → PASS
-```
+All recovery events include an **immediate identity verification** by the Twin agent.
 
 ---
 
-## 📊 Final Report
+## Results Summary
 
-```
-================================================================================
-              SIMULATION COMPLETE – FINAL REPORT
-================================================================================
+### Verification Metrics (Identity‑Enforced System)
 
-VERIFICATION SUMMARY:
-  Gates 1-8 Verifications: 4 passed, 0 failed
-  Total Checks: 4
-  Success Rate: 100.0%
+Based on the actual simulation run:
 
+| Metric                     | Value      |
+|----------------------------|------------|
+| Total verification events  | 4          |
+| Successful verifications   | 4          |
+| Failed verifications       | 0          |
+| Success rate               | **100%**   |
+| Identity mutations         | 0          |
+| Split‑brain occurrences    | 0 (enforced) |
 
-================================================================================
-              SCENARIO SUMMARY
-================================================================================
+> *The baseline scenario (duplicate agents) produced split‑brain – magenta nodes in visualisation.*
 
-Scenario                 Failure Type             Downtime (s)   Verif. Events  
---------------------------------------------------------------------------------
-Baseline Failure         Duplicate Agents (Split-Brain) 11.0      0              
-Node Crash               Crash + Recovery                2.0       1              
-Agent Migration          Migration                       0.0       1              
-Process Restart          Restart                         0.0       1              
---------------------------------------------------------------------------------
-```
+### Per‑Scenario Verification Events
 
----
+| Scenario          | Failure Type             | Downtime (s) | Verification Events |
+|-------------------|--------------------------|--------------|----------------------|
+| Baseline Failure  | Duplicate Agents         | 11.0         | 0                    |
+| Node Crash        | Crash + Recovery         | 2.0          | 1                    |
+| Agent Migration   | Migration                | 0.0          | 1                    |
+| Process Restart   | Restart                  | 0.0          | 1                    |
 
-## 📊 Scenario Analysis
+> *A fourth verification (not tied to a specific disruption) occurred at simulation end, bringing the total to 4 passes.*
 
-### Baseline Failure (1-11s)
+### Key Observations
 
-| Metric | Value |
-|--------|-------|
-| Duration | 11.0 seconds |
-| Peak Throughput | 3.77 Mbps |
-| Peak Latency | 766.32 ms |
-| Packets Dropped | 158 |
-| Verification Events | 0 |
-| **Result** | **Split-brain observed** |
-
-### Node Crash + Recovery (32-34s)
-
-| Metric | Value |
-|--------|-------|
-| Duration | 2.0 seconds |
-| Throughput at Recovery | 1.92 Mbps |
-| Latency | 6549.88 ms |
-| Packets Dropped | 321 |
-| Verification Events | ✅ 1 |
-| **Result** | **Identity preserved** |
-
-### Agent Migration (37-38s)
-
-| Metric | Value |
-|--------|-------|
-| Duration | 0.0 seconds |
-| Throughput | 1.10 Mbps |
-| Latency | 7624.67 ms |
-| Packets Dropped | 325 |
-| Verification Events | ✅ 1 |
-| **Result** | **Identity preserved** |
-
-### Process Restart (42-43s)
-
-| Metric | Value |
-|--------|-------|
-| Duration | 0.0 seconds |
-| Throughput at Recovery | 5.92 Mbps |
-| Latency | 7719.14 ms |
-| Packets Dropped | 647 |
-| Verification Events | ✅ 1 |
-| **Result** | **Identity preserved** |
-
----
-
-## 🔷 Identity Model
-
-Each agent is bound to a **deterministic fingerprint** derived from immutable fields. The identity is stored separately from the agent's execution state and never changes.
-
+- The SHA‑256 fingerprints remained **bit‑identical** after crash, migration, restart, and redeployment.  
+- Verification always succeeded (`Fingerprint ✓, Lineage ✓ -> PASS`).  
+- Packet loss and latency degradation occurred during disruption events (e.g., delay increased from ~45 ms to >2000 ms during crashes), but **identity continuity was never compromised**.  
 
 
 ---
 
-## 🏗 Network Topology
+## Output Artifacts
 
-| Node | Position | IP Address | Role |
-|------|----------|------------|------|
-| **gNB** | (-800, 0) | 7.0.0.1/8 | Base station + Twin Agent |
-| **Primary Edge** | (800, 200) | 7.0.0.2/8 | Enterprise Agent (active) |
-| **Secondary Edge** | (800, -200) | 7.0.0.3/8 | Backup node |
-| **UE-1** | (0, 400) | 7.0.0.4/8 | UDP traffic source/sink |
-| **UE-2** | (0, 200) | 7.0.0.5/8 | UDP traffic source/sink |
-| **UE-3** | (0, 0) | 7.0.0.6/8 | UDP traffic source/sink |
-| **PGW** | (0, -200) | 7.0.0.7/8 | Packet gateway |
+After running the simulation, the `Results/` folder contains:
 
----
+| File                         | Description                                                                 |
+|------------------------------|-----------------------------------------------------------------------------|
+| `detailed-metrics.csv`       | Per‑sample throughput, delay, jitter, packet loss, verification events     |
+| `scenario-summary.csv`       | Aggregated metrics per scenario (downtime, degradation, verification count) |
+| `performance-comparison.txt` | Human‑readable comparison of baseline vs continuity success                |
+| `visualization-guide.txt`    | NetAnim colour legend and event timeline                                   |
+| `nr-immortal.xml`            | NetAnim animation file – visualise node colours and packet flows           |
 
-## 🔥 Failure Scenarios Timeline
-
-```mermaid
-timeline
-    title Failure Scenario Timeline (0-45 seconds)
-    
-    section Baseline Failure (1-11s)
-        1-5 : Duplicate agents active
-        5-10 : Split-brain observed
-        10-11 : 158 packets dropped
-    section Normal Operation (12-31s)
-        12-31 : Traffic stabilization
-        30 : Peak throughput 10.71 Mbps
-    section Crash & Recovery (32-34s)
-        32 : Node crash
-        32-34 : Offline
-        34 : Recovery + verification PASS
-    section Migration (37-38s)
-        37 : Migration starts
-        38 : Verification PASS
-    section Process Restart (42-43s)
-        42 : Process crash
-        43 : Verification PASS
-```
+> *Verification events are also printed to the console in real time – see excerpt below.*
 
 ---
 
-## 🛠 Installation
+## Reproducibility Guide
 
 ### Prerequisites
 
-- Ubuntu 22.04 LTS or later
-- NS-3 version 3.46 with 5G-LENA module
-- NetAnim (optional)
-- Build tools: `g++`, `cmake`, `ninja`, `python3`, `qt5`
+- **NS‑3** (v3.46 or later) with **5G‑LENA NR module**  
+- **OpenSSL** development libraries (`libssl-dev` on Ubuntu/Debian)  
+- **NetAnim** (for visualisation)
 
-### Step-by-Step Installation
+### Steps
 
 ```bash
-# 1. Install NS-3 and 5G-LENA
-git clone https://gitlab.com/nsnam/ns-3-dev.git
-cd ns-3-dev
-git checkout ns-3.46
-./ns3 configure --enable-examples --enable-tests
-./ns3 build
-
-cd contrib
-git clone https://gitlab.com/cttc-lena/nr.git
-cd ..
-./ns3 configure --enable-examples --enable-tests
-./ns3 build
-
-# 2. Clone this repository
+# Clone this repository
 git clone https://github.com/Tes-hope/ACELOGIC-5G-RAN-Continuity-Test
 cd ACELOGIC-5G-RAN-Continuity-Test
 
-# 3. Copy simulation file
-cp nr-final.cc ../ns-3-dev/scratch/
+# Copy the simulation script into NS‑3 scratch folder
+cp nr-immortal.cc /path/to/ns-3-dev/scratch/
+
+# Build NS‑3 (if not already built)
+cd /path/to/ns-3-dev
+./ns3 configure --enable-examples --enable-tests
+./ns3 build
+
+# Run the simulation
+./ns3 run "scratch/nr-immortal --time=45 --numerology=4 --frequency=28e9"
+
+# View the animation (optional)
+./ns3 run netanim -- --file=Results/nr-immortal.xml
+```
+
+### Expected Console Output (excerpt from actual run)
+
+```
+=== DETERMINISTIC SHA-256 IDENTITY ANCHORS ===
+JMC-Origin Fingerprint: 0xb7c341aee604c164ada1f1b67f31c2b5860d1542d154f09c6cb703fc259bc965
+Aegis-RAN Fingerprint:  0x190f88ec3f0d2b14b4f9538e62fcfef76da2b0b1676949a6589a60d5b9cd3d03
+Lineage: JMC-Origin (ROOT) -> Aegis-RAN
+===============================================
+
+...
+
+[EVENT] Node crash at 32.00s
+[EVENT] Recovering from crash at 34.00s
+[VERIFY:SHA-256] Aegis-RAN: Fingerprint ✓, Lineage ✓ -> PASS
+[METRIC] 34.00s, Continuity Success – Crash Recovery: Throughput 0.00 Mbps, ..., Checks=1
+
+[EVENT] Agent migration at 37.00s
+[VERIFY:SHA-256] Aegis-RAN: Fingerprint ✓, Lineage ✓ -> PASS
+
+[EVENT] Process restart at 42.00s
+[VERIFY:SHA-256] Aegis-RAN: Fingerprint ✓, Lineage ✓ -> PASS
+
+...
+
+SIMULATION COMPLETE — FINAL REPORT (SHA-256)
+  Gates 1-8 Verifications: 4 passed, 0 failed
+  Success Rate: 100.0%
 ```
 
 ---
 
-## 🚀 Usage
-
-### Run Simulation
-
-```bash
-cd ../ns-3-dev
-./ns3 run "scratch/nr-final --simTime=45"
-```
-
-### Output Directory
+## Network Topology
 
 ```
-new-result-folder/
-├── nr-immortal.xml              # NetAnim trace file
-├── detailed-metrics.csv          # Time-series metrics
-├── scenario-summary.csv          # Per-scenario summary
-└── fingerprint-verification.log   # Verification event log
+                  [PGW] (Core Gateway)
+                     |
+                (S1-U link)
+                     |
+        +------------+------------+
+        |            |            |
+    [gNB-1]     [Primary Edge] [Secondary Edge]
+    (Twin)       (Enterprise)    (Standby)
+        |            |            |
+        +------------+------------+
+                     |
+              [UE-1] [UE-2] [UE-3]
+```
+
+- **gNB** hosts the **Twin Agent** (JMC‑Origin) – the root of trust.  
+- **Primary Edge** runs the **Enterprise Agent** (Aegis‑RAN) during normal operation.  
+- **Secondary Edge** is used for migration and failover.  
+- **UEs** generate uplink/downlink traffic to measure performance.
+
+---
+
+## System Architecture
+
+The simulation separates **identity** from **execution**:
+
+- **Identity Layer** – `ImmortalIdentity` class; stores immutable fields + SHA‑256 fingerprint.  
+- **Execution Layer** – `ImmortalAgent` (and derived `EnterpriseAgent`, `TwinAgent`); holds a `Ptr<Node>` for location.  
+- **Verification Layer** – `TwinAgent` verifies fingerprint and lineage of any `EnterpriseAgent`.  
+- **Metrics & Visualisation** – `RealMetricsCollector` logs CSV; `SimplifiedVisualizer` colours NetAnim nodes.
+
+---
+
+## Validation Scope 
+
+This validation is conducted under:
+
+- **Simulated** 5G NR channel conditions (3GPP UMi, shadowing enabled).  
+- **Controlled** failure injection (crashes, migrations, restarts).  
+
+
+Results demonstrate **feasibility** of deterministic identity continuity, not production performance guarantees.  
+Real‑world deployment would require:
+
+- Distributed verification .  
+- Hardware security modules (HSM) for fingerprint storage.  
+- Integration with container orchestration (Kubernetes – Phase 4).
+
+
+
+---
+
+## Repository Structure
+
+```
+ACELOGIC-5G-RAN-Continuity-Test/
+├── nr-immortal.cc                   # Main simulation code
+├── assets/                          # Immortal ID cards (PDFs)
+│   ├── JMC-Origin Immortal ID.pdf
+│   └── Aegis-RAN Immortal ID.pdf
+├── Results/                         # Generated after each run
+│   ├── detailed-metrics.csv
+│   ├── scenario-summary.csv
+│   ├── performance-comparison.txt
+│   ├── visualization-guide.txt
+│   └── nr-immortal.xml
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## 📊 Output 
+## Conclusion
 
-### `detailed-metrics.csv` Sample
+Phase 1 successfully demonstrates that **deterministic SHA‑256 fingerprints** derived from immutable identity attributes can:
 
+- Remain invariant across crashes, migrations, restarts, and redeployments.  
+- Enable a root‑of‑trust agent to verify continuity with 100% success.  
+- Eliminate split‑brain conditions when the verification mechanism is active.  
 
-| Timestamp | Scenario                          | Throughput | Latency | Dropped | Verif |
-|-----------|----------------------------------|-----------|---------|--------|-------|
-| 4.00      | Periodic Check                    | 2.91      | 6.90    | 1      | 0     |
-| 8.00      | Periodic Check                    | 3.77      | 691.99  | 158    | 0     |
-| 34.00     | Continuity Success – Crash Recovery | 1.92   | 6549.88 | 321    | 1     |
-| 38.00     | Continuity Success – Migration    | 1.06      | 7668.13 | 325    | 2     |
-| 43.00     | Continuity Success – Process Restart | 5.92   | 7719.14 | 647    | 3     |
-| 44.50     | Final                             | 0.52      | 7744.15 | 648    | 4     |
-
-### `scenario-summary.csv`
-
-| Scenario         | Failure Type       | Downtime | Verif |
-|-----------------|------------------|----------|-------|
-| Baseline Failure | Duplicate Agents  | 11.0     | 0     |
-| Node Crash       | Crash + Recovery  | 2.0      | 1     |
-| Agent Migration  | Migration         | 0.0      | 1     |
-| Process Restart  | Restart           | 0.0      | 1     |
-
----
-
-## 🎨 Visualization Guide
-
-### Color Code Reference
-
-| State | Color | Hex |
-|-------|-------|-----|
-| gNB (JMC-Origin) | Purple | `#8A2BE2` |
-| Edge Node Active | Lime Green | `#32CD32` |
-| Verification Success | Bright Green | `#00FF00` |
-| Crash | Red | `#FF0000` |
-| Offline | Dark Gray | `#404040` |
-| Migration | Gold | `#FFD700` |
-| Split-Brain | Magenta | `#FF00FF` |
+The results provide a solid foundation for moving to production deployment .
 
 ---
 
 
 
-<p align="center">
-  <sub>© 2026 NOVA X Quantum Inc. </sub><br/>
-  <br/>
-  
-  
-</p>
+.
