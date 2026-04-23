@@ -244,7 +244,7 @@ cd /path/to/ns-3-dev
 ./ns3 run netanim -- --file=Results/nr-immortal.xml
 ```
 
-### Expected Console Output (excerpt from actual run)
+### Console Output (From actual run)
 
 ```
 === DETERMINISTIC SHA-256 IDENTITY ANCHORS ===
