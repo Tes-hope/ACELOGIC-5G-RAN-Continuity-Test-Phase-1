@@ -155,9 +155,9 @@ When you open `Results/nr-immortal.xml` in NetAnim, nodes change color to reflec
 └────────────────┴───────────────────────────────────────────────┘
 ```
 
-  
- 
-     ![NetAnim Visualization](./assets/netanim-screenshot.png)
+## NetAnim Visualization
+
+![NetAnim Visualization](./assets/netanim-screenshot.png)
 
 
 ---
