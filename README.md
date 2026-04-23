@@ -139,19 +139,19 @@ When you open `Results/nr-immortal.xml` in NetAnim, nodes change color to reflec
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│                     NODE COLOR LEGEND                           │
+│                     NODE COLOR LEGEND                          │
 ├────────────────┬───────────────────────────────────────────────┤
 │ Color          │ Meaning                                       │
 ├────────────────┼───────────────────────────────────────────────┤
-│ 🟣 Purple       │ gNB (Twin Agent – normal)                     │
+│ 🟣 Purple       │ gNB (Twin Agent – normal)                    │
 │ 🟢 Bright Green │ Edge Node – normal / verified successfully   │
-│ 🔴 Red          │ Edge Node – crash event                       │
-│ ⚫ Dark Gray    │ Edge Node – offline / disappeared             │
-│ 🟡 Gold         │ Edge Node – migrating                         │
-│ 🟢 Lime Green   │ Edge Node – reappeared after recovery         │
-│ 🟣 Magenta      │ Split‑brain – duplicate agents detected       │
-│ ⚪ Light Gray   │ Twin offline (network partition)              │
-│ 🔵 Blue         │ UEs – normal operation                        │
+│ 🔴 Red          │ Edge Node – crash event                      │
+│ ⚫ Dark Gray    │ Edge Node – offline / disappeared            │
+│ 🟡 Gold         │ Edge Node – migrating                        │
+│ 🟢 Lime Green   │ Edge Node – reappeared after recovery        │
+│ 🟣 Magenta      │ Split‑brain – duplicate agents detected      │
+│ ⚪ Light Gray   │ Twin offline (network partition)             │
+│ 🔵 Blue         │ UEs – normal operation                       │
 └────────────────┴───────────────────────────────────────────────┘
 ```
 
