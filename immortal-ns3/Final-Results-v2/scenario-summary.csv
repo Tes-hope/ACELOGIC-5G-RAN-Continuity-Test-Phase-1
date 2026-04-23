@@ -1,5 +1,0 @@
-Scenario,FailureType,Downtime_s,Throughput_Degradation_%,Latency_Increase_ms,Packet_Loss_%,Verification_Events
-Baseline Failure,Duplicate Agents (Split-Brain),11,0,0,0.00388806,0
-Node Crash,Crash + Recovery,2,0,0,0,1
-Agent Migration,Migration,0,0,0,0,1
-Process Restart,Restart,0,0,0,0,1
