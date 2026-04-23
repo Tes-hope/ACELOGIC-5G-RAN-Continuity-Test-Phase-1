@@ -320,9 +320,8 @@ This validation is conducted under:
 Results demonstrate **feasibility** of deterministic identity continuity, not production performance guarantees.  
 Real‑world deployment would require:
 
-- Distributed verification.  
-- Hardware security modules (HSM) for fingerprint storage.  
-- Integration with container orchestration (Kubernetes – Phase 4).
+- Distributed verification.    
+- Integration with container orchestration (Kubernetes ).
 
 ---
 
